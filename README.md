@@ -5,7 +5,7 @@ A modern full-stack web application that combines live satellite tracking, astro
 
 ## 🎯 Features
 
-### 1. **Hero Experience**
+### 1. **Hero Experience** 
 - Realistic 3D Earth floating in space using CesiumJS
 - Dynamic Earth rotation with smooth camera movement
 - Professional space-themed appearance with starfield background
@@ -446,5 +446,6 @@ For issues, questions, or suggestions:
 **Happy stargazing! 🌌**
 
 Built with ❤️ for space enthusiasts
-#   A s t r o N o v a  
+#   A s t r o N o v a 
+ 
  
