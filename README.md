@@ -1,442 +1,314 @@
 # AstroNova 🚀🌍
-## Real-Time Space Awareness Platform
 
-A modern full-stack web application that combines live satellite tracking, astronomy data, asteroid monitoring, and AI-powered sky explanations. Experience a professional space operations dashboard merged with a planetarium.
+<div align="center">
 
-## 🎯 Features 
+### Real-Time Space Awareness Platform
 
-### 1. **Hero Experience** 
-- Realistic 3D Earth floating in space using CesiumJS
-- Dynamic Earth rotation with smooth camera movement 
-- Professional space-themed appearance with starfield background
-- Landing sequence with automated camera rotation
+Track satellites, explore astronomy, monitor asteroids, and interact with an AI-powered space assistant — all from a single mission-control dashboard.
 
-### 2. **Locate Me**
-- Browser geolocation integration (like Google Maps)
-- Display latitude, longitude, and city name
-- Smooth camera flight to user location
-- Blue marker showing your position with approximate radius
+![React](https://img.shields.io/badge/React-18-blue)
+![Vite](https://img.shields.io/badge/Vite-Latest-purple)
+![Node.js](https://img.shields.io/badge/Node.js-Express-green)
+![CesiumJS](https://img.shields.io/badge/CesiumJS-3D%20Globe-orange)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
-### 3. **Live Satellite Tracking**
-- Track ISS in real-time
-- Starlink constellation monitoring
-- GPS satellite positions
-- Updates every 30 seconds
-- Display satellite markers on globe with names and positions
+[Live Demo](#) • [Presentation](#) • [Report](#)
 
-### 4. **Orbit Visualization**
-- ISS orbit path rendering
-- Starlink orbit visualization
-- Future trajectory lines
-- Naturally wrapping polylines around Earth
+</div>
 
-### 5. **Satellites Above You**
-- Real-time list of satellites overhead
-- Display satellite names, altitude, and category
-- Interactive satellite details panel
+---
 
-### 6. **ISS Visibility**
-- Next ISS visible pass calculations
-- Start time, end time, and duration
-- Visibility quality indicators
+## 📖 Overview
 
-### 7. **Astronomy Dashboard**
-- **Moon Data**: Phase, distance, direction, altitude
-- **Planets**: Mercury, Venus, Mars, Jupiter, Saturn
-- Visibility status, direction, altitude, constellation info for each
-- Constellation information
+AstroNova is a full-stack space intelligence platform that combines real-time satellite tracking, astronomy visualization, asteroid monitoring, and AI-powered explanations into a single interactive experience.
 
-### 8. **Sky View Mode**
-- Camera moves to user location
-- Tilt upward for sky-looking perspective
-- Realistic space view experience
-- Moon, planets, ISS, and satellite markers
+Built using React, CesiumJS, Node.js, and multiple space-data APIs, AstroNova delivers a professional mission-control style dashboard that allows users to explore Earth, track satellites, monitor celestial bodies, and understand what is happening in space around them.
 
-### 9. **NASA Integration**
-- Near-Earth objects data
-- Asteroid threat indicators
-- Astronomy Picture of the Day (APOD)
-- Title, description, and HD image display
+---
 
-### 10. **AI Assistant (Gemini-Powered)**
-- Answer questions like "What can I see tonight?"
-- "Is the ISS visible?"
-- "Tell me about Venus"
-- "Explain this satellite"
-- Contextual natural-language explanations
+## ✨ Features
 
-### 11. **UI/UX**
-- Dark mode with space aesthetic
-- Blue and purple neon highlights
-- Glassmorphism design pattern
-- **Layout**:
-  - Left Panel: User info, satellites above, ISS visibility
-  - Center: Cesium 3D globe
-  - Right Panel: Moon, planets, asteroids, APOD
-  - Bottom: AI assistant chat
+### 🌎 Interactive 3D Earth
 
-## 🛠️ Tech Stack
+* Realistic 3D Earth powered by CesiumJS
+* Dynamic Earth rotation
+* Smooth camera navigation
+* Immersive starfield environment
+
+### 📍 Locate Me
+
+* Browser geolocation support
+* Automatic Earth navigation to user location
+* Location marker with accuracy radius
+* Latitude, longitude, and city information
+
+### 🛰️ Live Satellite Tracking
+
+* International Space Station (ISS) tracking
+* Starlink constellation monitoring
+* GPS satellite visualization
+* Live telemetry updates
+* Automatic refresh every 30 seconds
+
+### 🛤️ Orbit Visualization
+
+* ISS orbit rendering
+* Starlink orbit paths
+* Future trajectory projections
+* Global orbit wrapping
+
+### ☁️ Satellites Above You
+
+* Satellites currently overhead
+* Satellite altitude information
+* Satellite category identification
+* Interactive details panel
+
+### 🌠 ISS Visibility Predictions
+
+* Next visible ISS pass
+* Start and end times
+* Duration estimates
+* Visibility quality indicators
+
+### 🌙 Astronomy Dashboard
+
+* Moon phase tracking
+* Moon distance and altitude
+* Planet visibility information
+* Constellation details
+* Sky object positioning
+
+### 🔭 Sky View Mode
+
+* Ground-level viewing perspective
+* Sky-oriented camera mode
+* Moon, planets, and satellite visibility
+* Immersive astronomy experience
+
+### ☄️ NASA Integration
+
+* Near-Earth Object tracking
+* Asteroid monitoring
+* Risk assessment indicators
+* Astronomy Picture of the Day (APOD)
+
+### 🤖 AI Space Assistant
+
+* Powered by Google Gemini
+* Astronomy explanations
+* Satellite information
+* Visibility assistance
+* Context-aware responses
+
+### 🎨 Modern UI/UX
+
+* Dark space-inspired theme
+* Glassmorphism interface
+* Neon highlights
+* Fully responsive layout
+* Mission-control dashboard design
+
+---
+
+## 🏗️ System Architecture
+
+```text
+┌──────────────────────────┐
+│      React Frontend      │
+│  CesiumJS + TailwindCSS  │
+└─────────────┬────────────┘
+              │
+              ▼
+┌──────────────────────────┐
+│   Node.js + Express API  │
+└─────────────┬────────────┘
+              │
+ ┌────────────┼─────────────┐
+ ▼            ▼             ▼
+N2YO        NASA      AstronomyAPI
+API         API           API
+              │
+              ▼
+         Gemini AI
+```
+
+---
+
+
+## 🛠️ Technology Stack
 
 ### Frontend
-- **React** 18.2 + Vite (fast development)
-- **Tailwind CSS** - Utility-first styling
-- **CesiumJS** - 3D globe engine
-- **Zustand** - Lightweight state management
-- **Axios** - HTTP client
-- **Lucide React** - Icon library
+
+* React 18
+* Vite
+* Tailwind CSS
+* CesiumJS
+* Zustand
+* Axios
+* Lucide React
 
 ### Backend
-- **Node.js** + **Express** - REST API server
-- **Axios** - HTTP requests to external APIs
-- **Cors** - Cross-origin resource sharing
-- **dotenv** - Environment variable management
+
+* Node.js
+* Express.js
+* Axios
+* CORS
+* dotenv
+
+### APIs & Services
+
+* N2YO API
+* NASA Open APIs
+* AstronomyAPI
+* Google Gemini API
+* Cesium Ion
+
+---
+
+## 📂 Project Structure
+
+```bash
+AstroNova/
+│
+├── frontend/
+│   ├── src/
+│   ├── public/
+│   └── package.json
+│
+├── backend/
+│   ├── routes/
+│   ├── controllers/
+│   ├── services/
+│   ├── utils/
+│   └── package.json
+│
+├── screenshots/
+│
+└── README.md
+```
+
+---
 
 ## 📋 Prerequisites
 
-- **Node.js** ≥ 18.0.0
-- **npm** or **yarn**
-- Modern web browser with WebGL support
-- API Keys for:
-  - N2YO (Satellite Tracking)
-  - NASA (Space Data)
-  - Astronomy API (Astronomy Data)
-  - Google Gemini (AI)
-  - Cesium Ion (3D Globe)
+* Node.js >= 18
+* npm or yarn
+* Modern browser with WebGL support
 
-## 🚀 Setup Instructions
+### Required API Keys
 
-### 1. Get API Keys
+* N2YO API
+* NASA API
+* Astronomy API
+* Google Gemini API
+* Cesium Ion Token
 
-#### N2YO (Satellite Tracking)
-https://www.n2yo.com/api/
-- Sign up for free account
-- Get your API key
+---
 
-#### NASA API
-https://api.nasa.gov/
-- Sign up for free account
-- Receive API key instantly
+## 🚀 Installation
 
-#### Astronomy API
-https://www.astronomyapi.com/
-- Create account
-- Get App ID and App Secret
-
-
-#### Google Gemini API
-
-https://makersuite.google.com/app/apikey
-- Create API key for Gemini
-
-
-#### Cesium Ion (Optional - for advanced features)
-
-https://ion.cesium.com/
-- Create free account
-- Get Cesium Ion access token
-
-
-### 2. Clone or Download Project
+### Clone Repository
 
 ```bash
+git clone https://github.com/your-username/AstroNova.git
+
 cd AstroNova
 ```
 
-### 3. Backend Setup
+### Backend Setup
 
-bash
+```bash
 cd backend
 
-# Install dependencies
 npm install
 
-# Create .env file from template
-cp .env.example .env
-
-# Edit .env and add your API keys
-# REQUIRED:
-# - N2YO_API_KEY
-# - NASA_API_KEY
-# - ASTRONOMY_APP_ID
-# - ASTRONOMY_APP_SECRET
-# - GEMINI_API_KEY
-
-# Start backend (development mode)
 npm run dev
+```
 
-# Or production mode
-npm start
+### Frontend Setup
 
-
-Backend runs on: `http://localhost:5000`
-
-### 4. Frontend Setup
-
-bash
+```bash
 cd frontend
 
-# Install dependencies
 npm install
 
-# Create .env file from template
-cp .env.example .env
-
-# Edit .env and add Cesium Ion token (optional)
-# VITE_CESIUM_ION_TOKEN=your_token_here
-# VITE_API_URL=http://localhost:5000/api
-
-# Start development server
 npm run dev
+```
 
-# Build for production
-npm run build
+---
 
-# Preview production build
-npm run preview
-
-
-Frontend runs on: `http://localhost:5173`
-
-## 📁 Project Structure
-
-
-AstroNova/
-├── frontend/
-│   ├── src/
-│   │   ├── components/          # React components
-│   │   │   ├── Globe.jsx       # CesiumJS globe
-│   │   │   ├── LeftPanel.jsx   # User location & satellites
-│   │   │   ├── RightPanel.jsx  # Moon, planets, asteroids
-│   │   │   └── AIAssistant.jsx # AI chat interface
-│   │   ├── services/            # API service classes
-│   │   │   ├── api.js          # Axios instance
-│   │   │   ├── SatelliteService.js
-│   │   │   ├── AstronomyService.js
-│   │   │   ├── NASAService.js
-│   │   │   └── AIService.js
-│   │   ├── context/
-│   │   │   └── store.js        # Zustand state store
-│   │   ├── hooks/              # Custom React hooks
-│   │   ├── App.jsx            # Main app component
-│   │   └── index.css          # Tailwind + custom styles
-│   ├── index.html
-│   ├── vite.config.js
-│   ├── tailwind.config.js
-│   ├── postcss.config.js
-│   ├── package.json
-│   └── .env.example
-│
-├── backend/
-│   ├── src/
-│   │   ├── config/
-│   │   │   └── env.js         # Environment config
-│   │   ├── middleware/
-│   │   │   ├── cors.js        # CORS configuration
-│   │   │   └── errorHandler.js # Error handling
-│   │   ├── routes/
-│   │   │   ├── satellites.js   # Satellite endpoints
-│   │   │   ├── astronomy.js    # Astronomy endpoints
-│   │   │   ├── nasa.js         # NASA endpoints
-│   │   │   ├── ai.js           # AI endpoints
-│   │   │   └── health.js       # Health check
-│   │   ├── controllers/
-│   │   │   ├── satelliteController.js
-│   │   │   ├── astronomyController.js
-│   │   │   ├── nasaController.js
-│   │   │   └── aiController.js
-│   │   ├── services/
-│   │   │   ├── N2YOService.js      # Satellite API
-│   │   │   ├── AstronomyService.js # Astronomy API
-│   │   │   ├── NASAService.js      # NASA API
-│   │   │   └── GeminiService.js    # Gemini AI
-│   │   └── server.js          # Express app entry
-│   ├── package.json
-│   ├── .env.example
-│   └── .gitignore
-│
-├── .gitignore
-└── README.md
-
-
-## 🌐 API Endpoints
-
-### Satellites
-- `GET /api/satellites/positions` - Get satellite positions
-- `GET /api/satellites/above` - Get satellites above location
-- `GET /api/satellites/iss-passes` - Get ISS visual passes
-- `GET /api/satellites/iss-position` - Get ISS current position
-- `GET /api/satellites/common` - Get common satellites
-
-### Astronomy
-- `GET /api/astronomy/moon` - Get moon data
-- `GET /api/astronomy/planet` - Get planet data
-- `GET /api/astronomy/bodies` - Get all celestial bodies
-- `GET /api/astronomy/constellation` - Get constellation data
-
-### NASA
-- `GET /api/nasa/apod` - Astronomy Picture of the Day
-- `GET /api/nasa/neo` - Near-Earth objects
-- `GET /api/nasa/hazardous-asteroids` - Hazardous asteroids
-- `GET /api/nasa/asteroid/:asteroidId` - Asteroid by ID
-
-### AI
-- `POST /api/ai/ask` - Ask question
-- `POST /api/ai/visible-tonight` - What's visible tonight
-- `POST /api/ai/explain-satellite` - Explain a satellite
-- `POST /api/ai/chat` - General chat
-
-### Health
-- `GET /api/health` - Health check
-
-## 🔒 Environment Variables
+## 🔐 Environment Variables
 
 ### Backend (.env)
 
+```env
 PORT=5000
-NODE_ENV=development
-N2YO_API_KEY=your_key_here
-NASA_API_KEY=your_key_here
-ASTRONOMY_APP_ID=your_id_here
-ASTRONOMY_APP_SECRET=your_secret_here
-GEMINI_API_KEY=your_key_here
-FRONTEND_URL=http://localhost:5173
-CACHE_DURATION=5
 
+N2YO_API_KEY=your_key
+
+NASA_API_KEY=your_key
+
+ASTRONOMY_APP_ID=your_id
+
+ASTRONOMY_APP_SECRET=your_secret
+
+GEMINI_API_KEY=your_key
+```
 
 ### Frontend (.env)
 
+```env
 VITE_API_URL=http://localhost:5000/api
-VITE_CESIUM_ION_TOKEN=your_token_here
 
-## 🚢 Deployment
+VITE_CESIUM_ION_TOKEN=your_token
+```
 
-### Frontend (Vercel)
-bash
-# Build
-npm run build
+---
 
-# Deploy to Vercel
-vercel
+## 🌍 Deployment
 
+### Frontend
 
-### Backend (Render)
-bash
-# Set environment variables in Render dashboard
-# Connect repository
-# Render auto-deploys from main branch
+* Vercel
 
+### Backend
 
-## 🔄 Real-Time Updates
+* Render
 
-- Satellites update every 30 seconds
-- Astronomy data refreshes on location/date change
-- ISS passes calculated dynamically
-- Live WebSocket support can be added for future versions
+---
 
-## 🎨 Customization
+## 🎯 Future Improvements
 
-### Colors
-Edit `frontend/tailwind.config.js` to customize theme colors:
-javascript
-colors: {
-  space: { 900, 800, 700, 600 },
-  neon: { blue, purple, pink }
-}
+* Additional satellite constellations
+* Space weather monitoring
+* Meteor shower predictions
+* Historical satellite replay
+* AR sky visualization
+* Multi-language support
+* User accounts and saved observations
 
+---
 
-### API Calls
-Modify service files in `frontend/src/services/` and `backend/src/services/`
+## 🏆 Project Highlights
 
-### Components
-Create new components in `frontend/src/components/` and add to App.jsx
+* Real-time satellite intelligence
+* Interactive 3D Earth visualization
+* AI-powered astronomy assistant
+* NASA and N2YO integrations
+* Full-stack architecture
+* Responsive modern UI
 
-## 📊 Performance Optimization
+---
 
-- API response caching (configurable duration)
-- Lazy loading of components
-- Optimized Cesium rendering
-- Minimal re-renders with Zustand
+## 📜 License
 
-## 🐛 Troubleshooting
+This project is licensed under the MIT License.
 
-### Cesium not loading
-- Check Cesium Ion token in .env
-- Verify browser WebGL support
-- Check browser console for errors
+---
 
-### API keys not working
-- Verify keys in .env files
-- Check API provider status
-- Ensure keys have correct permissions
+<div align="center">
 
-### CORS errors
-- Backend CORS configured in `backend/src/middleware/cors.js`
-- Verify FRONTEND_URL in backend .env
+Made with ❤️ by Team AstroNova 🚀
 
-### Geolocation not working
-- HTTPS required for production
-- User must grant permission
-- Check browser geolocation settings
-
-## 📚 API Documentation
-
-Visit `http://localhost:5000/` when backend is running to see available endpoints.
-
-## 🤝 Contributing
-
-1. Clone the repository
-2. Create a feature branch
-3. Make changes
-4. Test thoroughly
-5. Submit pull request
-
-## 📝 License
-
-MIT License - feel free to use for personal or commercial projects
-
-## 🙏 Acknowledgments
-
-- **CesiumJS** - 3D geospatial visualization
-- **N2YO** - Satellite tracking data
-- **NASA** - Space and astronomy data
-- **Astronomy API** - Astronomy calculations
-- **Google Gemini** - AI capabilities
-- **Tailwind CSS** - Styling framework
-- **React & Vite** - Frontend framework
-
-## 📞 Support
-
-For issues, questions, or suggestions:
-1. Check the troubleshooting section
-2. Review API documentation
-3. Check browser console for errors
-4. Verify all API keys are set correctly
-
-## 🗺️ Roadmap
-
-- [ ] WebSocket real-time updates
-- [ ] Historical satellite tracking
-- [ ] Custom alerts and notifications
-- [ ] User accounts and saved locations
-- [ ] Mobile responsive design
-- [ ] Dark/light theme toggle
-- [ ] AR mode for satellite tracking
-- [ ] Multi-language support
-- [ ] Advanced orbital mechanics visualization
-- [ ] Event calendar for astronomical events
-
-## 🌟 Features Coming Soon
-
-- Satellite prediction models
-- Advanced filtering options
-- Custom orbit paths
-- Photo capture from globe view
-- Social sharing features
-- API rate limiting and authentication
-- Database integration for history
-
-
-
-**Happy stargazing! 🌌**
-
-Built with ❤️ for space enthusiasts
+</div>
