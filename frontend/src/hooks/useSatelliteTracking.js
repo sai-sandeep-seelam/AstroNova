@@ -2,8 +2,8 @@ import { useEffect, useRef, useCallback } from 'react';
 import { useAppStore } from '../context/store';
 import SatelliteService from '../services/SatelliteService';
 
-const ISS_INTERVAL_MS = 10_000;   // 10 seconds
-const CAT_INTERVAL_MS = 15_000;   // 15 seconds
+const ISS_INTERVAL_MS = 30_000;    // 30 seconds (was 10s — reduced to avoid N2YO rate limit)
+const CAT_INTERVAL_MS = 120_000;   // 2 minutes  (was 15s — server caches for 5 min)
 
 export function useSatelliteTracking() {
   const {
