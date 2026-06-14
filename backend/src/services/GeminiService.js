@@ -5,7 +5,7 @@ class GeminiService {
   constructor() {
     this.apiKey = config.geminiApiKey;
     this.baseURL = 'https://generativelanguage.googleapis.com/v1beta/models';
-    this.model = 'gemini-pro';
+    this.model = 'gemini-2.5-flash';
   }
 
   /**
@@ -39,7 +39,7 @@ class GeminiService {
             temperature: 0.7,
             topK: 40,
             topP: 0.95,
-            maxOutputTokens: 256,
+            maxOutputTokens: 2048,
           },
         }
       );
@@ -54,6 +54,9 @@ class GeminiService {
         response: content,
       };
     } catch (error) {
+      if (error.response) {
+        console.error('Gemini API Error Response:', JSON.stringify(error.response.data));
+      }
       console.error('Gemini generateResponse error:', error.message);
       throw new Error(`Failed to generate AI response: ${error.message}`);
     }
