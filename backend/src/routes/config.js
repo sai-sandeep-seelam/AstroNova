@@ -12,7 +12,7 @@ router.get('/public', (req, res) => {
   res.json({
     success: true,
     data: {
-      apiUrl: config.frontendUrl,
+      apiUrl: `http://localhost:${config.port}/api`,
       environment: config.nodeEnv,
       // Add any other public config here
       // DO NOT expose API keys here!

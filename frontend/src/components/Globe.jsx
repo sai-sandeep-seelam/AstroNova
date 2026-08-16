@@ -16,6 +16,9 @@ import {
   PolylineCollection,
   PolylineOutlineMaterialProperty,
   Ellipsoid,
+  HeadingPitchRoll,
+  Transforms,
+  Quaternion,
 } from 'cesium';
 
 import { useAppStore } from '../context/store';
@@ -122,7 +125,11 @@ const Globe = () => {
         scene.screenSpaceCameraController.enableTilt      = true;
         scene.screenSpaceCameraController.enableLook      = true;
         scene.screenSpaceCameraController.minimumZoomDistance = 150_000;
-        scene.screenSpaceCameraController.maximumZoomDistance = 120_000_000;
+        scene.screenSpaceCameraController.maximumZoomDistance = 2_000_000_000; // Deep space
+
+        // Make space look realistic
+        scene.skyBox.show = true;
+        scene.backgroundColor = Color.BLACK;
 
         // Disable Cesium credit
         viewer._cesiumWidget._creditContainer.style.display = 'none';
@@ -281,6 +288,16 @@ const Globe = () => {
         disableDepthTestDistance: Number.POSITIVE_INFINITY,
         scaleByDistance: new NearFarScalar(1e5, 1.2, 2e7, 0.4),
       },
+      orientation: Transforms.headingPitchRollQuaternion(
+        Cartesian3.fromDegrees(pos.satlng, pos.satlat, (pos.satalt || 408) * 1000),
+        new HeadingPitchRoll(0, 0, 0)
+      ),
+      model: {
+        uri: 'https://assets.cesium.com/137699/ISS_stationary.glb', // Use Cesium's public ISS model if available, else fallback to box
+        minimumPixelSize: 64,
+        maximumScale: 20000,
+        show: false // We use billboard for now, but axis is ready
+      }
     });
 
     entitiesRef.current.iss = entity;
@@ -321,10 +338,26 @@ const Globe = () => {
 
       if (Math.abs(lat) > 90 || Math.abs(lng) > 180) return;
 
+      const latRad = CesiumMath.toRadians(lat);
+      const lngRad = CesiumMath.toRadians(lng);
+      const inclRad = CesiumMath.toRadians(sat.inclination ?? 51.6);
+      
+      // Calculate Heading for Prograde Orbit
+      let cosLat = Math.cos(latRad);
+      if (cosLat < 0.0001) cosLat = 0.0001;
+      let sinHeading = Math.cos(inclRad) / cosLat;
+      sinHeading = Math.max(-1, Math.min(1, sinHeading));
+      const headingRad = Math.asin(sinHeading); // Assumes ascending node
+      
+      const position = Cartesian3.fromDegrees(lng, lat, alt);
+      const hpr = new HeadingPitchRoll(headingRad, 0, 0);
+      const orientation = Transforms.headingPitchRollQuaternion(position, hpr);
+
       const entity = viewer.entities.add({
         id: `sat-${sat.satid || idx}`,
-        satelliteData: sat, // Store satellite data on entity for click handler
-        position: Cartesian3.fromDegrees(lng, lat, alt),
+        satelliteData: sat,
+        position,
+        orientation,
         point: {
           pixelSize: 5,
           color: color.withAlpha(0.85),
@@ -332,6 +365,14 @@ const Globe = () => {
           outlineWidth: 1,
           disableDepthTestDistance: Number.POSITIVE_INFINITY,
           scaleByDistance: new NearFarScalar(1e5, 2.0, 3e7, 0.3),
+        },
+        // 3D Axis representation (cylinder pointing along flight path)
+        cylinder: {
+          length: 300000.0, // 300km long to be visible at scale
+          topRadius: 10000.0,
+          bottomRadius: 10000.0,
+          material: color.withAlpha(0.5),
+          outline: false,
         },
         label: {
           text: name.length > 15 ? name.substring(0, 14) + '…' : name,
@@ -348,21 +389,27 @@ const Globe = () => {
       });
       entitiesRef.current.satellites.push(entity);
 
-      // ── Orbit path (simplified circular ring) ──────────────
+      // ── Precise Orbit path through satellite ──────────────
       if (showOrbitPaths) {
-        const altM     = alt;
-        const inclRad  = ((sat.inclination ?? 51.6) * Math.PI) / 180;
-        const pts      = [];
-        const steps    = 120;
+        // Calculate velocity vector in ECEF to determine orbit plane
+        const surfaceNormal = viewer.scene.globe.ellipsoid.geodeticSurfaceNormal(position);
+        const east = new Cartesian3(-Math.sin(lngRad), Math.cos(lngRad), 0);
+        const north = Cartesian3.cross(surfaceNormal, east, new Cartesian3());
 
+        const vEast = Cartesian3.multiplyByScalar(east, Math.sin(headingRad), new Cartesian3());
+        const vNorth = Cartesian3.multiplyByScalar(north, Math.cos(headingRad), new Cartesian3());
+        const velocityUnit = Cartesian3.normalize(Cartesian3.add(vEast, vNorth, new Cartesian3()), new Cartesian3());
+        
+        // Q vector orthogonal to position and velocity
+        const Q = Cartesian3.multiplyByScalar(velocityUnit, Cartesian3.magnitude(position), new Cartesian3());
+
+        const pts = [];
+        const steps = 120;
         for (let i = 0; i <= steps; i++) {
           const theta = (i / steps) * 2 * Math.PI;
-          // Simplified orbit in orbital plane, then rotate by inclination
-          const x = Math.cos(theta);
-          const y = Math.sin(theta) * Math.cos(inclRad);
-          const z = Math.sin(theta) * Math.sin(inclRad);
-          const R = 6_371_000 + altM;
-          pts.push(new Cartesian3(x * R, y * R, z * R));
+          const pCos = Cartesian3.multiplyByScalar(position, Math.cos(theta), new Cartesian3());
+          const qSin = Cartesian3.multiplyByScalar(Q, Math.sin(theta), new Cartesian3());
+          pts.push(Cartesian3.add(pCos, qSin, new Cartesian3()));
         }
 
         const orbitEntity = viewer.entities.add({

@@ -5,7 +5,7 @@ class GeminiService {
   constructor() {
     this.apiKey = config.geminiApiKey;
     this.baseURL = 'https://generativelanguage.googleapis.com/v1beta/models';
-    this.model = 'gemini-pro';
+    this.model = 'gemini-1.5-flash';
   }
 
   /**

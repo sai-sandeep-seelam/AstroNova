@@ -37,16 +37,22 @@ const SkyViewPanel = () => {
 
     // Add visible planets from astronomy data
     if (bodiesData) {
-      // Handle different possible data structures
-      const bodies = bodiesData.bodies || bodiesData.data?.bodies || [];
-      if (Array.isArray(bodies)) {
-        bodies.forEach((body) => {
-          if (body.name && (body.altitude > 0 || body.visible)) {
+      const rows = bodiesData?.data?.table?.rows || bodiesData?.bodies || [];
+      if (Array.isArray(rows)) {
+        rows.forEach((row) => {
+          const name = row.entry?.name || row.name;
+          if (!name || name.toLowerCase() === 'moon') return;
+          const cell = row.cells?.[0] || row;
+          const alt = parseFloat(cell?.position?.horizontal?.altitude?.degrees ?? row.altitude ?? 0);
+          const az = parseFloat(cell?.position?.horizontal?.azimuth?.degrees ?? row.azimuth ?? 0);
+          const distKm = cell?.distance?.fromEarth?.km ?? row.distance;
+
+          if (alt > 0 || row.visible) {
             visible.planets.push({
-              name: body.name,
-              altitude: Math.round(body.altitude || 0),
-              azimuth: body.azimuth ? Math.round(body.azimuth) : 'N/A',
-              distance: body.distance || 'Unknown',
+              name,
+              altitude: Math.round(alt),
+              azimuth: Math.round(az),
+              distance: distKm ? `${Math.round(distKm / 1000).toLocaleString()}k km` : 'Unknown',
             });
           }
         });
