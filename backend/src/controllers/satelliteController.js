@@ -1,6 +1,21 @@
 import N2YOService from '../services/N2YOService.js';
 import { AppError } from '../middleware/errorHandler.js';
 
+// ── In-memory cache to prevent N2YO rate-limit exhaustion ────────
+const cache = new Map();
+const CACHE_TTL_CATEGORY = 5 * 60 * 1000; // 5 minutes for category/above
+const CACHE_TTL_ISS      = 8 * 1000;      // 8 seconds for ISS position
+
+function getCached(key, ttl) {
+  const entry = cache.get(key);
+  if (entry && Date.now() - entry.ts < ttl) return entry.data;
+  return null;
+}
+
+function setCache(key, data) {
+  cache.set(key, { data, ts: Date.now() });
+}
+
 // N2YO category codes
 const SATELLITE_CATEGORIES = {
   iss: { id: 25544, mode: 'single' },
@@ -102,14 +117,19 @@ export const getISSPosition = async (req, res, next) => {
   try {
     const { lat = 0, lng = 0, alt = 0 } = req.query;
     const ISS_ID = 25544;
+    const cacheKey = `iss-pos`;
 
-    const data = await N2YOService.getPositions(
-      ISS_ID,
-      parseFloat(lat),
-      parseFloat(lng),
-      parseInt(alt),
-      0
-    );
+    let data = getCached(cacheKey, CACHE_TTL_ISS);
+    if (!data) {
+      data = await N2YOService.getPositions(
+        ISS_ID,
+        parseFloat(lat),
+        parseFloat(lng),
+        parseInt(alt),
+        0
+      );
+      if (data) setCache(cacheKey, data);
+    }
 
     res.json({
       success: true,
@@ -167,28 +187,35 @@ export const getSatellitesByCategory = async (req, res, next) => {
     }
 
     const catConfig = SATELLITE_CATEGORIES[category.toLowerCase()] || SATELLITE_CATEGORIES.all;
+    const cacheKey = `cat-${category}-${Math.round(parseFloat(lat))}-${Math.round(parseFloat(lng))}`;
 
-    let data;
-    if (catConfig.mode === 'single') {
-      // ISS specific — get its position
-      data = await N2YOService.getPositions(
-        catConfig.id,
-        parseFloat(lat),
-        parseFloat(lng),
-        0,
-        0
-      );
-    } else {
-      // Category-based above query
-      // N2YO above endpoint: /above/{lat}/{lng}/{alt}/{radius}/{category}
-      data = await N2YOService.getSatellitesByCategory(
-        parseFloat(lat),
-        parseFloat(lng),
-        0,
-        90,
-        catConfig.category,
-        parseInt(limit)
-      );
+    let data = getCached(cacheKey, CACHE_TTL_CATEGORY);
+    if (!data) {
+      if (catConfig.mode === 'single') {
+        // ISS specific — get its position
+        data = await N2YOService.getPositions(
+          catConfig.id,
+          parseFloat(lat),
+          parseFloat(lng),
+          0,
+          0
+        );
+      } else {
+        // Category-based above query
+        data = await N2YOService.getSatellitesByCategory(
+          parseFloat(lat),
+          parseFloat(lng),
+          0,
+          90,
+          catConfig.category,
+          parseInt(limit)
+        );
+      }
+
+      // Only cache if we got valid data (not rate-limit errors)
+      if (data && !data?.error) {
+        setCache(cacheKey, data);
+      }
     }
 
     res.json({

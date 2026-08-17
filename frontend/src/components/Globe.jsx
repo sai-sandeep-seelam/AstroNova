@@ -54,9 +54,11 @@ const Globe = () => {
     setViewerRef,
     showOrbitPaths,
     isSkyViewMode,
+    selectedSatellite,
     setSelectedSatellite,
     bodiesData,
     setSelectedPlanet,
+    isTrackingSelectedSat,
   } = useAppStore();
 
 
@@ -143,7 +145,7 @@ const Globe = () => {
 
 
 
-  // ── Double-click → focus entity ─────────────────────
+        // ── Double-click → focus entity ─────────────────────
         viewer.screenSpaceEventHandler.setInputAction((click) => {
           const picked = viewer.scene.pick(click.position);
           if (picked?.id && picked.id.position?.getValue) {
@@ -335,6 +337,7 @@ const Globe = () => {
       const lng  = sat.satlng ?? sat.ra   ?? 0;
       const alt  = (sat.satalt ?? 500) * 1000; // km → m
       const name = sat.satname || `SAT-${idx}`;
+      const isSelected = selectedSatellite?.satid === sat.satid;
 
       if (Math.abs(lat) > 90 || Math.abs(lng) > 180) return;
 
@@ -359,10 +362,10 @@ const Globe = () => {
         position,
         orientation,
         point: {
-          pixelSize: 5,
-          color: color.withAlpha(0.85),
-          outlineColor: Color.WHITE.withAlpha(0.4),
-          outlineWidth: 1,
+          pixelSize: isSelected ? 9 : 5,
+          color: isSelected ? Color.MAGENTA : color.withAlpha(0.85),
+          outlineColor: Color.WHITE.withAlpha(isSelected ? 0.9 : 0.4),
+          outlineWidth: isSelected ? 2 : 1,
           disableDepthTestDistance: Number.POSITIVE_INFINITY,
           scaleByDistance: new NearFarScalar(1e5, 2.0, 3e7, 0.3),
         },
@@ -376,32 +379,27 @@ const Globe = () => {
         },
         label: {
           text: name.length > 15 ? name.substring(0, 14) + '…' : name,
-          font: '10px Inter, sans-serif',
-          fillColor: color,
+          font: isSelected ? 'bold 11px Inter, sans-serif' : '10px Inter, sans-serif',
+          fillColor: isSelected ? Color.MAGENTA : color,
           outlineColor: Color.BLACK,
-          outlineWidth: 1,
+          outlineWidth: 2,
           style: LabelStyle.FILL_AND_OUTLINE,
-          pixelOffset: new Cartesian2(10, 0),
+          pixelOffset: new Cartesian2(12, 0),
           disableDepthTestDistance: Number.POSITIVE_INFINITY,
-          scaleByDistance: new NearFarScalar(1e5, 1.0, 1e7, 0),
-          translucencyByDistance: new NearFarScalar(5e5, 1, 1e7, 0),
+          scaleByDistance: new NearFarScalar(1e5, 1.2, 1e7, 0.1),
+          translucencyByDistance: isSelected 
+            ? new NearFarScalar(1e5, 1.0, 1e7, 1.0)
+            : new NearFarScalar(5e5, 1, 1e7, 0),
         },
       });
       entitiesRef.current.satellites.push(entity);
 
-      // ── Precise Orbit path through satellite ──────────────
-      if (showOrbitPaths) {
-        // Calculate velocity vector in ECEF to determine orbit plane
-        const surfaceNormal = viewer.scene.globe.ellipsoid.geodeticSurfaceNormal(position);
-        const east = new Cartesian3(-Math.sin(lngRad), Math.cos(lngRad), 0);
-        const north = Cartesian3.cross(surfaceNormal, east, new Cartesian3());
-
-        const vEast = Cartesian3.multiplyByScalar(east, Math.sin(headingRad), new Cartesian3());
-        const vNorth = Cartesian3.multiplyByScalar(north, Math.cos(headingRad), new Cartesian3());
-        const velocityUnit = Cartesian3.normalize(Cartesian3.add(vEast, vNorth, new Cartesian3()), new Cartesian3());
-        
-        // Q vector orthogonal to position and velocity
-        const Q = Cartesian3.multiplyByScalar(velocityUnit, Cartesian3.magnitude(position), new Cartesian3());
+      // ── Orbit path (simplified circular ring) ──────────────
+      if (showOrbitPaths || isSelected) {
+        const altM     = alt;
+        const inclRad  = ((sat.inclination ?? 51.6) * Math.PI) / 180;
+        const pts      = [];
+        const steps    = 120;
 
         const pts = [];
         const steps = 120;
@@ -416,19 +414,25 @@ const Globe = () => {
           id: `orbit-${sat.satid || idx}`,
           polyline: {
             positions: pts,
-            width: 2,
-            material: new PolylineOutlineMaterialProperty({
-              color: color.withAlpha(0.6),
-              outlineColor: color.withAlpha(0.3),
-              outlineWidth: 1,
-            }),
+            width: isSelected ? 3 : 2,
+            material: isSelected
+              ? new PolylineOutlineMaterialProperty({
+                  color: Color.MAGENTA.withAlpha(0.8),
+                  outlineColor: Color.MAGENTA.withAlpha(0.4),
+                  outlineWidth: 1.5,
+                })
+              : new PolylineOutlineMaterialProperty({
+                  color: color.withAlpha(0.6),
+                  outlineColor: color.withAlpha(0.3),
+                  outlineWidth: 1,
+                }),
             clampToGround: false,
           },
         });
         entitiesRef.current.satellites.push(orbitEntity);
       }
     });
-  }, [satellites, satelliteCategory, showOrbitPaths]);
+  }, [satellites, satelliteCategory, showOrbitPaths, selectedSatellite]);
 
   // ── Camera mode transitions ───────────────────────────────────
   useEffect(() => {
@@ -715,6 +719,30 @@ const Globe = () => {
     viewer.scene.globe.showGroundAtmosphere = showAtmosphere;
     viewer.scene.skyAtmosphere.show          = showAtmosphere;
   }, [showAtmosphere]);
+
+  // ── Track selected satellite camera ───────────────────────────
+  useEffect(() => {
+    const viewer = viewerRef.current;
+    if (!viewer || !isTrackingSelectedSat || !selectedSatellite) return;
+
+    // Find current selected satellite position
+    const currentSat = satellites.find(s => s.satid === selectedSatellite.satid) || selectedSatellite;
+    const lat = currentSat.satlat ?? currentSat.decl;
+    const lng = currentSat.satlng ?? currentSat.ra;
+    const alt = currentSat.satalt ?? 500;
+
+    if (lat !== undefined && lng !== undefined) {
+      const { Cartesian3 } = window.Cesium || {};
+      if (Cartesian3) {
+        viewer.camera.flyTo({
+          destination: Cartesian3.fromDegrees(lng, lat, alt * 1000 + 1_500_000),
+          duration: 2.5,
+        });
+      }
+    }
+  }, [satellites, selectedSatellite, isTrackingSelectedSat]);
+
+
 
   return (
     <div
