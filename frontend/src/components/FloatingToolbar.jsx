@@ -1,9 +1,10 @@
-import { MapPin, Radio, Moon, Zap, Bot, Settings } from 'lucide-react';
+import { MapPin, Radio, Moon, Zap, Bot, Settings, Trash2 } from 'lucide-react';
 import { useAppStore } from '../context/store';
 
 const TOOLS = [
   { id: 'location',   icon: MapPin,    label: 'My Location',    color: '#00d9ff' },
   { id: 'satellites', icon: Radio,     label: 'Satellites',     color: '#a78bfa' },
+  { id: 'debris',     icon: Trash2,    label: 'Space Debris',   color: '#f97316' },
   { id: 'moon',       icon: Moon,      label: 'Moon & Planets', color: '#fbbf24' },
   { id: 'neo',        icon: Zap,       label: 'Near-Earth Objects', color: '#f87171' },
   { id: 'ai',         icon: Bot,       label: 'AI Assistant',   color: '#34d399' },

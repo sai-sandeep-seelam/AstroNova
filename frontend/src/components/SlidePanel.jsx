@@ -6,10 +6,12 @@ import SatellitePanel from './SatellitePanel';
 import MoonPanel      from './MoonPanel';
 import NEOPanel       from './NEOPanel';
 import SettingsPanel  from './SettingsPanel';
+import DebrisPanel    from './DebrisPanel';
 
 const PANEL_MAP = {
   location:   { Component: LocationPanel,  title: 'My Location',        color: '#00d9ff' },
   satellites: { Component: SatellitePanel, title: 'Satellites',         color: '#a78bfa' },
+  debris:     { Component: DebrisPanel,    title: 'Space Debris',       color: '#f97316' },
   moon:       { Component: MoonPanel,      title: 'Moon & Planets',     color: '#fbbf24' },
   neo:        { Component: NEOPanel,       title: 'Near-Earth Objects', color: '#f87171' },
   settings:   { Component: SettingsPanel,  title: 'Settings',           color: '#94a3b8' },
