@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import {
   Viewer,
+  Ion,
   Cartesian3,
   Color,
   Math as CesiumMath,
@@ -66,6 +67,11 @@ const Globe = () => {
 
     const initViewer = async () => {
       try {
+        // Set Cesium Ion token if available
+        if (import.meta.env.VITE_CESIUM_ION_TOKEN) {
+          Ion.defaultAccessToken = import.meta.env.VITE_CESIUM_ION_TOKEN;
+        }
+
         // Try to load World Terrain; fall back gracefully
         let terrainProvider;
         try {
